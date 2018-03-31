@@ -896,7 +896,31 @@ final public class Repository {
 		return Result<OpaquePointer, NSError>.success(tree!)
 	}
 
-	public func status(show: git_status_show_t = GIT_STATUS_SHOW_INDEX_AND_WORKDIR, flags: git_status_opt_t? = nil) -> Result<[StatusEntry], NSError> {
+	public struct StatusFlags: OptionSet {
+		public let rawValue: UInt32
+
+		static let includeIgnored = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_IGNORED.rawValue)
+		static let includeUnmodified = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_UNMODIFIED.rawValue)
+		static let excludeSubmodules = StatusFlags(rawValue: GIT_STATUS_OPT_EXCLUDE_SUBMODULES.rawValue)
+		static let recurseUntrackedDirs = StatusFlags(rawValue: GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS.rawValue)
+		static let disablePathSpecMatch = StatusFlags(rawValue: GIT_STATUS_OPT_DISABLE_PATHSPEC_MATCH.rawValue)
+		static let recurseIgnoredDirs = StatusFlags(rawValue: GIT_STATUS_OPT_RECURSE_IGNORED_DIRS.rawValue)
+		static let renamesHeadToIndex = StatusFlags(rawValue: GIT_STATUS_OPT_RENAMES_HEAD_TO_INDEX.rawValue)
+		static let renamesIndexToWorkdir = StatusFlags(rawValue: GIT_STATUS_OPT_RENAMES_INDEX_TO_WORKDIR.rawValue)
+		static let sortCaseSensitively = StatusFlags(rawValue: GIT_STATUS_OPT_SORT_CASE_SENSITIVELY.rawValue)
+		static let sortCaseInsensitively = StatusFlags(rawValue: GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY.rawValue)
+		static let renamesFromRewrites = StatusFlags(rawValue: GIT_STATUS_OPT_RENAMES_FROM_REWRITES.rawValue)
+		static let noRefresh = StatusFlags(rawValue: GIT_STATUS_OPT_NO_REFRESH.rawValue)
+		static let updateIndex = StatusFlags(rawValue: GIT_STATUS_OPT_UPDATE_INDEX.rawValue)
+		static let includeUnreadable = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_UNREADABLE.rawValue)
+		static let includeUnreadableAsUntracked = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_UNREADABLE_AS_UNTRACKED.rawValue)
+
+		public init(rawValue: UInt32) {
+			self.rawValue = rawValue
+		}
+	}
+
+	public func status(show: git_status_show_t = GIT_STATUS_SHOW_INDEX_AND_WORKDIR, flags: StatusFlags? = nil) -> Result<[StatusEntry], NSError> {
 		var returnArray = [StatusEntry]()
 
 		// Do this because GIT_STATUS_OPTIONS_INIT is unavailable in swift
