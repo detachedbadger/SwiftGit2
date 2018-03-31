@@ -899,6 +899,7 @@ final public class Repository {
 	public struct StatusFlags: OptionSet {
 		public let rawValue: UInt32
 
+		public static let includeUntracked = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_UNTRACKED.rawValue)
 		public static let includeIgnored = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_IGNORED.rawValue)
 		public static let includeUnmodified = StatusFlags(rawValue: GIT_STATUS_OPT_INCLUDE_UNMODIFIED.rawValue)
 		public static let excludeSubmodules = StatusFlags(rawValue: GIT_STATUS_OPT_EXCLUDE_SUBMODULES.rawValue)
