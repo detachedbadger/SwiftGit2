@@ -896,9 +896,7 @@ final public class Repository {
 		return Result<OpaquePointer, NSError>.success(tree!)
 	}
 
-	// MARK: - Status
-
-	public func status() -> Result<[StatusEntry], NSError> {
+	public func status(show: git_status_show_t = GIT_STATUS_SHOW_INDEX_AND_WORKDIR, flags: git_status_opt_t? = nil) -> Result<[StatusEntry], NSError> {
 		var returnArray = [StatusEntry]()
 
 		// Do this because GIT_STATUS_OPTIONS_INIT is unavailable in swift
@@ -908,7 +906,11 @@ final public class Repository {
 			return .failure(NSError(gitError: optionsResult, pointOfFailure: "git_status_init_options"))
 		}
 		var options = pointer.move()
-		pointer.deallocate()
+		options.show = show
+		if let flags = flags {
+			options.flags = flags.rawValue
+		}
+		pointer.deallocate(capacity: 1)
 
 		var unsafeStatus: OpaquePointer? = nil
 		defer { git_status_list_free(unsafeStatus) }
